@@ -1,0 +1,119 @@
+import sys
+from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QComboBox, QLineEdit, QVBoxLayout
+
+class SuhuConverter(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle("Kalkulator Konversi Suhu")
+        self.setGeometry(300, 300, 300, 200)
+
+        self.setupUI()
+
+    def setupUI(self):
+        layout = QVBoxLayout()
+
+        self.label_suhu_awal = QLabel("Suhu Awal:")
+        self.combo_suhu_awal = QComboBox()
+        self.combo_suhu_awal.addItem("Celcius (°C)")
+        self.combo_suhu_awal.addItem("Reamur (°Ré)")
+        self.combo_suhu_awal.addItem("Kelvin (K)")
+        self.combo_suhu_awal.addItem("Fahrenheit (°F)")
+
+        self.label_suhu_akhir = QLabel("Suhu Akhir:")
+        self.combo_suhu_akhir = QComboBox()
+        self.combo_suhu_akhir.addItem("Celcius (°C)")
+        self.combo_suhu_akhir.addItem("Reamur (°Ré)")
+        self.combo_suhu_akhir.addItem("Kelvin (K)")
+        self.combo_suhu_akhir.addItem("Fahrenheit (°F)")
+
+        self.label_suhu_input = QLabel("Suhu Input:")
+        self.input_suhu = QLineEdit()
+
+        self.label_hasil = QLabel("Hasil Konversi:")
+
+        layout.addWidget(self.label_suhu_awal)
+        layout.addWidget(self.combo_suhu_awal)
+        layout.addWidget(self.label_suhu_akhir)
+        layout.addWidget(self.combo_suhu_akhir)
+        layout.addWidget(self.label_suhu_input)
+        layout.addWidget(self.input_suhu)
+        layout.addWidget(self.label_hasil)
+
+        self.combo_suhu_awal.currentIndexChanged.connect(self.update_conversion)
+        self.combo_suhu_akhir.currentIndexChanged.connect(self.update_conversion)
+        self.input_suhu.textChanged.connect(self.update_conversion)
+
+        self.setLayout(layout)
+
+    def update_conversion(self):
+        suhu_awal = self.input_suhu.text()
+        satuan_awal = self.combo_suhu_awal.currentText()
+        satuan_akhir = self.combo_suhu_akhir.currentText()
+
+        try:
+            suhu_awal = float(suhu_awal)
+            hasil_konversi = self.konversi_suhu(suhu_awal, satuan_awal, satuan_akhir)
+            self.label_hasil.setText(f"Hasil Konversi: {hasil_konversi:.2f}")
+        except ValueError:
+            self.label_hasil.setText("Masukkan suhu yang valid")
+
+    def konversi_suhu(self, suhu, dari, ke):
+        if dari == "Celcius (°C)":
+            if ke == "Reamur (°Ré)":
+                hasil = (4 / 5) * suhu
+                return hasil
+            elif ke == "Kelvin (K)":
+                hasil = suhu + 273.15
+                return hasil
+            elif ke == "Fahrenheit (°F)":
+                hasil = (9 / 5) * suhu + 32
+                return hasil
+            else:
+                return suhu
+        elif dari == "Reamur (°Ré)":
+            if ke == "Celcius (°C)":
+                hasil = (5 / 4) * suhu
+                return hasil
+            elif ke == "Kelvin (K)":
+                hasil = (5 / 4) * suhu + 273.15
+                return hasil
+            elif ke == "Fahrenheit (°F)":
+                hasil = (9 / 4) * suhu + 32
+                return hasil
+            else:
+                return suhu
+        elif dari == "Kelvin (K)":
+            if ke == "Celcius (°C)":
+                hasil = suhu - 273.15
+                return hasil
+            elif ke == "Reamur (°Ré)":
+                hasil = (4 / 5) * (suhu - 273.15)
+                return hasil
+            elif ke == "Fahrenheit (°F)":
+                hasil = (9 / 5) * (suhu - 273.15) + 32
+                return hasil
+            else:
+                return suhu
+        elif dari == "Fahrenheit (°F)":
+            if ke == "Celcius (°C)":
+                hasil = (5 / 9) * (suhu - 32)
+                return hasil
+            elif ke == "Reamur (°Ré)":
+                hasil = (4 / 9) * (suhu - 32)
+                return hasil
+            elif ke == "Kelvin (K)":
+                hasil = (5 / 9) * (suhu - 32) + 273.15
+                return hasil
+            else:
+                return suhu
+        else:
+            return suhu
+
+    def run(self):
+        self.show()
+
+if __name__ == '__main__':
+    app = QApplication(sys.argv)
+    converter = SuhuConverter()
+    converter.run()
+    sys.exit(app.exec_())
